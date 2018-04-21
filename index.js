@@ -4,12 +4,14 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const keys = require('./config/keys');
 
-passport.use(new GoogleStrategy({
+passport.use(new GoogleStrategy({ // use the Google Strategy
   clientID: keys.googleClientID,
   clientSecret: keys.googleClientSecret,
   callbackURL: '/auth/google/callback'
-}, (accessToken) => {
-  console.log(accessToken);
+}, (accessToken, refreshToken, profile, done) => { // here we can use the information we get back from google
+  console.log('accessToken', accessToken);
+  console.log('refreshToken', refreshToken);
+  console.log('profile: ', profile);
 }));
 
 app.get(
@@ -19,6 +21,9 @@ app.get(
   })
 );
 
+app.get('/auth/google/callback', passport.authenticate('google')); // when hitting this url, we will have the code back from google to use to authenticate
+
+// default
 // app.get('/', (req, res) => {  // no longer needed
 //   res.send({ hi: 'there' });
 // });
